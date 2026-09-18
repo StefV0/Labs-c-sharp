@@ -138,7 +138,7 @@ namespace GeneticSearch
             }
         }
 
-        static void CommandHandler(List<Protein> proteins, List<Command> commands)
+        static void CommandHandler(List<Protein> proteins, List<Command> commands, string path)
         {
             int comm_count = 0;
             StringBuilder b = new StringBuilder();
@@ -151,12 +151,12 @@ namespace GeneticSearch
                 if (commands[i].name == "search")
                 {
                     b.Append($"{comm_count:D3}" + "\t" + commands[i].name + "\t" + commands[i].parameter1 + '\n');
-                    b.Append($"{"organism",-17}" + $"{"protein",-20}" + '\n');
+                    b.Append($"{"organism",-25}" + $"{"protein",-25}" + '\n');
                     bool is_empt = true;
                     foreach (Protein p in proteins)
                         if (Encoding(p.amino_acids).Contains(commands[i].parameter1))
                         {
-                            b.Append($"{p.organism,-17}" + $"{p.name,-20}" + '\n');
+                            b.Append($"{p.organism,-25}" + $"{p.name,-25}" + '\n');
                             is_empt = false;
                         }
                     if (is_empt == true) b.Append("NOT FOUND\n");
@@ -165,7 +165,7 @@ namespace GeneticSearch
 
                 else if (commands[i].name == "diff")
                 {
-                    b.Append($"{comm_count:D3}" + "\t" + commands[i].name + "\t" + commands[i].parameter1 + '\n'+ commands[i].parameter2+'\n');
+                    b.Append($"{comm_count:D3}" + "\t" + commands[i].name + "\t" + commands[i].parameter1 + '\t'+ commands[i].parameter2+'\n');
                     b.Append("Amino-acids difference: \n");
                     Protein first = proteins.FirstOrDefault(pr => pr.name == commands[i].parameter1);
                     Protein second = proteins.FirstOrDefault(pr => pr.name == commands[i].parameter2);
@@ -215,20 +215,18 @@ namespace GeneticSearch
                 b.Append(new string('-', width));
                 b.Append('\n');
             }
-            File.WriteAllText(@"D:\C#\Labs\Lab_1\Lab_1\output\gendata.txt", b.ToString());
+            File.WriteAllText(path, b.ToString());
             b.Clear();
         }
 
         static void Main(string[] args)
         {
-            //reding protein data
-            List<Protein> data = ReadData(@"D:\C#\Labs\Lab_1\Lab_1\input\proteins\sequences.0.txt");
-            PrintData(data);
-
-            //reading commands
-            List<Command> commands = ReadCommands(@"D:\C#\Labs\Lab_1\Lab_1\input\commands\commands.0.txt");
-            PrintCommands(commands);
-            CommandHandler(data, commands);
+            for(int i = 0; i < 3; i++)
+            {
+                List<Protein> data = ReadData(@$"D:\C#\Labs\Lab_1\Lab_1\input\proteins\sequences.{i}.txt");
+                List<Command> commands = ReadCommands(@$"D:\C#\Labs\Lab_1\Lab_1\input\commands\commands.{i}.txt");
+                CommandHandler(data, commands, @$"D:\C#\Labs\Lab_1\Lab_1\output\gendata{i}.txt");
+            }
         }
     }
 }

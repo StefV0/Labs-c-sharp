@@ -36,6 +36,7 @@ namespace GeneticSearch
             while (!reader.EndOfStream)
             {
                 string line = reader.ReadLine();
+                if (string.IsNullOrWhiteSpace(line)) continue;
                 string[] parts = line.Split('\t');
 
                 if (parts.Length == 2)
@@ -139,23 +140,77 @@ namespace GeneticSearch
 
         static void CommandHandler(List<Protein> proteins, List<Command> commands)
         {
+            int comm_count = 0;
+            StringBuilder b = new StringBuilder();
+            int width = Console.WindowWidth;
             for (int i = 0; i < commands.Count; i++)
             {
-                if (commands[i].name == "search") { }
-                if (commands[i].name == "diff") { }
-                if (commands[i].name == "mode") { }
+                comm_count++;
+                b.Append(new string('-' , width)+'\n');
+
+                if (commands[i].name == "search")
+                {
+                    b.Append($"{comm_count:D3}" + "\t" + commands[i].name + "\t" + commands[i].parameter1 + '\n');
+                    b.Append($"{"organism",-17}" + $"{"protein",-20}" + '\n');
+                    bool is_empt = true;
+                    foreach (Protein p in proteins)
+                        if (Encoding(p.amino_acids).Contains(commands[i].parameter1))
+                        {
+                            b.Append($"{p.organism,-17}" + $"{p.name,-20}" + '\n');
+                            is_empt = false;
+                        }
+                    if (is_empt == true) b.Append("NOT FOUND\n");
+                }
+
+
+                else if (commands[i].name == "diff")
+                {
+                    b.Append($"{comm_count:D3}" + "\t" + commands[i].name + "\t" + commands[i].parameter1 + '\n'+ commands[i].parameter2+'\n');
+                    b.Append("Amino-acids difference: \n");
+                    Protein first = proteins.FirstOrDefault(pr => pr.name == commands[i].parameter1);
+                    Protein second = proteins.FirstOrDefault(pr => pr.name == commands[i].parameter2);
+                    if ( (!string.IsNullOrEmpty(first.name) && !string.IsNullOrEmpty(second.name)))
+                    {
+                        int r = 0;
+                        r += Math.Abs(first.amino_acids.Length - second.amino_acids.Length);
+
+                        int min = first.amino_acids.Length <= second.amino_acids.Length ? first.amino_acids.Length : second.amino_acids.Length;
+                        for (int j = 0; j < min; j++) if (first.amino_acids[j] != second.amino_acids[j]) r++;
+                        b.Append(r);
+                    }
+                    else if (string.IsNullOrEmpty(first.name))
+                    { b.Append($"MISSING: {commands[i].parameter1}"); }
+
+                    else if (string.IsNullOrEmpty(second.name))
+                    { b.Append($"MISSING: {commands[i].parameter2}"); }
+
+                    else
+                    {
+                        b.Append($"MISSING: {commands[i].parameter1} {commands[i].parameter2}");
+                    }
+                    b.Append('\n');
+                }
+                else if (commands[i].name == "mode")
+                {
+
+                }
+                b.Append(new string('-', width));
+                b.Append('\n');
             }
+            File.WriteAllText(@"D:\C#\Labs\Lab_1\Lab_1\output\gendata.txt", b.ToString());
+            b.Clear();
         }
 
         static void Main(string[] args)
         {
             //reding protein data
-            List<Protein> data = ReadData("sequences.0.txt");
+            List<Protein> data = ReadData(@"D:\C#\Labs\Lab_1\Lab_1\input\proteins\sequences.0.txt");
             PrintData(data);
 
             //reading commands
-            List<Command> commands = ReadCommands("commands.0.txt");
+            List<Command> commands = ReadCommands(@"D:\C#\Labs\Lab_1\Lab_1\input\commands\commands.0.txt");
             PrintCommands(commands);
+            CommandHandler(data, commands);
         }
     }
 }

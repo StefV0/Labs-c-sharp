@@ -192,6 +192,24 @@ namespace GeneticSearch
                 }
                 else if (commands[i].name == "mode")
                 {
+                    b.Append($"{comm_count:D3}" + "\t" + commands[i].name + "\t" + commands[i].parameter1 + '\n');
+                    b.Append("amino-acid occurs:\n");
+                    Protein p = proteins.FirstOrDefault(pr => pr.name == commands[i].parameter1);
+                    if (!string.IsNullOrEmpty(p.name))
+                    { char l = 'V';
+                        int max = 0;
+                        HashSet<char> letters = new HashSet<char>(p.amino_acids.ToCharArray());
+                        foreach (char letter in letters)
+                        {
+                            if (p.amino_acids.Count(letter) > max)
+                            {
+                                l = letter;
+                                max = p.amino_acids.Count(letter);
+                            }
+                        }
+                        b.Append($"{l}\t\t{max}\n"); }
+                    else b.Append($"MISSING: {commands[i].parameter1}");
+
 
                 }
                 b.Append(new string('-', width));

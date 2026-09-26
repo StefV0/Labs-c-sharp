@@ -1,0 +1,19 @@
+Cat Mouse Game
+
+Cat Mouse Distance---------------?? -5 -8
+?? -5 -8
+?? -5 -8
+?? -5 -8
+-3 -5 -8
+-3 -5 -8
+-3 -5 -8
+-3 -5 -8
+-3 -5 -8
+-3 -5 -8
+-3 -5 -8
+---------------
+
+Distance traveled:	Mouse	Cat
+                  	0	0
+
+Mouse evaded cat

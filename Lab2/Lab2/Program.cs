@@ -20,7 +20,7 @@ struct Command
 }
 class Program
 {
-    static (List<Command>, int start) ReadFile(string path)
+    static (List<Command> commands, int start) ReadFile(string path)
     {
         var f = File.ReadLines(path);
         int s = Convert.ToInt32(f.First());
@@ -55,12 +55,21 @@ class Program
             }
         }
         File.AppendAllText(path, new string('-', 15));
+        File.AppendAllText(path, "\n\n");
+        File.AppendAllText(path, game.GetCatMouseDistance());
+        File.AppendAllText(path, "\n");
         File.AppendAllText(path, game.FinalState());
     }
     
 
-    void Main()
+    static void Main(string[] args)
     {
-
+        for (int i = 1; i < 4; i++)
+        {
+            var tupple = ReadFile(@$"D:\C#\Labs\Lab2\Lab2\Tests\{i}.ChaseData.txt");
+            CatMouseGame game = new CatMouseGame(tupple.start);
+            Execute($@"D:\C#\Labs\Lab2\Lab2\Results\{i}.PursuitLog.txt",tupple.commands,game);
+            
+        }
     }
 }

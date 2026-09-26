@@ -13,6 +13,8 @@ namespace Lab2
         private int FieldSize;
         private int? CPos, MPos;
         private int GameOverTurn;
+        private int CatDistance;
+        private int MouseDistance;
 
         public CatMouseGame(int fieldSize, int cPos, int mPos)
         {
@@ -33,15 +35,17 @@ namespace Lab2
             switch (mover)
             {
                 case Mover.Cat:
+                    CatDistance += (CPos == null ? 0 : Math.Abs((((CPos + t) % FieldSize) - CPos) ?? 0));
                     CPos = (CPos == null ? t : ((CPos + t) % FieldSize));
                     break;
                 case Mover.Mouse:
+                    MouseDistance += (MPos == null ? 0 : Math.Abs((((MPos + t) % FieldSize) - MPos) ?? 0));
                     MPos = (MPos == null ? t : ((MPos + t) % FieldSize));
                     break;
             }
             if (Distance() == 0 && CPos != null)
             {
-                GameOverTurn =(int) CPos;
+                GameOverTurn = (int) CPos;
             }
         }
 
@@ -69,5 +73,12 @@ namespace Lab2
            
         }
        
+        public string GetCatMouseDistance()
+        {
+            StringBuilder b = new StringBuilder();
+            b.Append("Distance traveled:\tMouse\tCat\n");
+            b.Append($"                  \t{MouseDistance}\t{CatDistance}\n");
+            return b.ToString();
+        }
     }
 }

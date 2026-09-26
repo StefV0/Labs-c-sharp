@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
 namespace Lab2
 {
-    enum Mover
+    public enum Mover
     {
         Cat,
         Mouse
@@ -41,7 +39,7 @@ namespace Lab2
                     MPos = (MPos == null ? t : ((MPos + t) % FieldSize));
                     break;
             }
-            if (MPos == CPos && MPos != null && CPos != null)
+            if (Distance() == 0 && CPos != null)
             {
                 GameOverTurn =(int) CPos;
             }
@@ -60,9 +58,15 @@ namespace Lab2
         public string State()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"{(CPos == null ? "??" : CPos):-3} {(MPos == null ? "??" : MPos):-5}");
+            sb.Append($"{(CPos == null ? "??" : CPos):-3} {(MPos == null ? "??" : MPos):-5} {(Distance()!=null ? Distance() : ' '):-8}");
             sb.Append('\n');
-            return 
+            return sb.ToString();
+        }
+
+        public string FinalState()
+        {
+            return this.IsMouseCatched ? $"Mouse catched at turn {this.GameOverTurn}" : "Mouse evaded cat";
+           
         }
        
     }

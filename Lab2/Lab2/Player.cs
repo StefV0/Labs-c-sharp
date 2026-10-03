@@ -27,7 +27,7 @@ namespace Lab2
 
         public void Move(int size, int arg)
         {
-            if (Stat == Status.NotInGame) Location = Math.Abs(arg); else { Location = (Location + arg % size + size) % size; Distance += Math.Abs(arg); }
+            if (Stat == Status.NotInGame) { Location = Math.Abs(arg); Stat = Status.Playing; } else { Location = (Location + arg % size + size) % size; Distance += Math.Abs(arg); }
         }
 
     }

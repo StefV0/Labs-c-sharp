@@ -16,6 +16,6 @@ Cat Mouse Distance
 ---------------
 
 Distance traveled:	Mouse	Cat
-                  	29   	7  
+                  	29   	29 
 
 Mouse evaded cat

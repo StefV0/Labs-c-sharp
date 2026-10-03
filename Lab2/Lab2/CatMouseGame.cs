@@ -1,80 +1,91 @@
-﻿using System.Text;
+﻿using System.Diagnostics.Metrics;
+using System.Text;
 
 namespace Lab2
 {
-    public enum Mover
+    public enum GameStatus
     {
-        Cat,
-        Mouse
+        Playing,
+        Ended
     }
+
+    struct Command
+    {
+        public char command;
+        public int argument;
+
+        public Command(char c, int turn)
+        {
+            command = c;
+            argument = turn;
+        }
+        public Command(string[] ar)
+        {
+            command = ar[0][0];
+            if (ar.Length == 2) argument = Convert.ToInt32(ar[1]); 
+        }
+    }
+
     internal class CatMouseGame
     {
-        private bool IsMouseCatched = false;
+        private GameStatus st;
         private int FieldSize;
-        private int? CPos, MPos;
+        private Player cat;
+        private Player mouse;
         private int GameOverTurn;
-        private int CatDistance;
-        private int MouseDistance;
-
-        public CatMouseGame(int fieldSize, int cPos, int mPos)
-        {
-            FieldSize = fieldSize;
-            CPos = cPos;
-            MPos = mPos;
-            CatDistance = 0;
-            MouseDistance = 0;
-        }
+        
 
         public CatMouseGame(int fieldSize)
         {
             FieldSize = fieldSize;
-            CPos = null;
-            MPos = null;
-            CatDistance = 0;
-            MouseDistance = 0;
+            cat = new Player("Cat"); ;
+            mouse = new Player("Mouse");
+            st = GameStatus.Playing;
         }
 
-        public void iterate(Mover mover, int t)
+        public void move(Command c)
         {
-            switch (mover)
+            switch (c.command)
             {
-                case Mover.Cat:
-                    CatDistance += (CPos == null ? 0 : Math.Abs(t));
-                    CPos = (CPos == null ? Math.Abs(t) : (CPos + t % FieldSize + FieldSize)%FieldSize);
+                case 'C':
+                    cat.Move(FieldSize, c.argument);
                     break;
-                case Mover.Mouse:
-                    MouseDistance += (MPos == null ? 0 : Math.Abs(t));
-                    MPos = (MPos == null ? Math.Abs(t) : (MPos + t % FieldSize + FieldSize) % FieldSize);
+                case 'M':
+                    mouse.Move(FieldSize,c.argument);
                     break;
             }
-            if (Distance() == 0 && CPos != null)
+            if (Distance() == 0)
             {
-                GameOverTurn = (int) CPos;
-                IsMouseCatched = true;
+                GameOverTurn = cat.Location;
+                cat.Stat = Status.Winner;
+                mouse.Stat = Status.Loser;
+                st = GameStatus.Ended;
             }
         }
 
         public int? Distance() {
-            if (CPos != null && MPos != null)
+            if ((cat.Stat == Status.Playing) &&(mouse.Stat == Status.Playing))
             {
-                return Math.Abs((CPos ?? 0) - (MPos ?? 0));
+                return Math.Abs(cat.Location - mouse.Location);
             } else
             {
                 return null;
             }
-        } 
+        }
+        
+        
 
         public string State()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"{(CPos == null ? "??" : CPos),-3} {(MPos == null ? "??" : MPos),-5} {((Distance()!=null) ? Distance() : " "),-8}");
+            sb.Append($"{(cat.Stat == Status.NotInGame ?  "??" : cat.Location),-3} {(mouse.Stat == Status.NotInGame ? "??" : mouse.Location),-5} {((Distance()!=null) ? Distance() : " "),-8}");
             sb.Append('\n');
             return sb.ToString();
         }
 
         public string FinalState()
         {
-            return this.IsMouseCatched ? $"Mouse catched at cell: {this.GameOverTurn}" : "Mouse evaded cat";
+            return cat.Stat == Status.Winner ? $"Mouse catched at cell: {this.GameOverTurn}" : "Mouse evaded cat";
            
         }
        
@@ -82,8 +93,47 @@ namespace Lab2
         {
             StringBuilder b = new StringBuilder();
             b.Append("Distance traveled:\tMouse\tCat\n");
-            b.Append($"                  \t{MouseDistance,-5}\t{CatDistance,-3}\n");
+            b.Append($"                  \t{mouse.Distance,-5}\t{mouse.Distance,-3}\n");
             return b.ToString();
+        }
+
+        public StringBuilder RunGame(List<Command> commands)
+        {
+            StringBuilder file_text = new StringBuilder();
+            file_text.Append("Cat Mouse Game\n");
+            file_text.Append("\nCat Mouse Distance\n");
+            file_text.Append(new string('-', 15) + "\n");
+            foreach (Command c in commands)
+            {
+                if (st == GameStatus.Playing)
+                {
+                    switch (c.command)
+                    {
+                        case 'P':
+                            file_text.Append(State());
+                            break;
+                        default:
+                            move(c);
+                            break;
+                    }
+                } else break;
+                
+            }
+            
+            if (st != GameStatus.Ended)
+            {
+                mouse.Stat = Status.Winner;
+                cat.Stat = Status.Loser;
+                st = GameStatus.Ended;
+            }
+
+
+            file_text.Append(new string('-', 15));
+            file_text.Append("\n\n");
+            file_text.Append(GetCatMouseDistance());
+            file_text.Append("\n");
+            file_text.Append(FinalState());
+            return file_text;
         }
     }
 }

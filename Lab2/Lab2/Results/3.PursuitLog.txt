@@ -11,10 +11,9 @@ Cat Mouse Distance
 4   19    15      
 23  19    4       
 23  8     15      
-8   8     0       
 ---------------
 
 Distance traveled:	Mouse	Cat
-                  	24   	60 
+                  	24   	24 
 
-Mouse catched at turn 8
+Mouse catched at cell: 8

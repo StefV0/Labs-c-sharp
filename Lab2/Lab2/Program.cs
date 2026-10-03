@@ -27,7 +27,7 @@ class Program
         List<Command> commands = new List<Command>();
         foreach( string c in f.Skip(1))
         {
-            string[] raw = c.Split('\t');
+            string[] raw = c.Split(' ');
             commands.Add(new Command(raw));
 
         }
@@ -37,8 +37,8 @@ class Program
     static void Execute(string path, List<Command> commands, CatMouseGame game)
     {
         File.WriteAllText(path, "Cat Mouse Game\n");
-        File.AppendAllText(path, "\nCat Mouse Distance");
-        File.AppendAllText(path,new string('-',15));
+        File.AppendAllText(path, "\nCat Mouse Distance\n");
+        File.AppendAllText(path,new string('-',15)+"\n");
         foreach(Command c in commands)
         {
             switch (c.command) 
@@ -54,6 +54,7 @@ class Program
                     break;
             }
         }
+
         File.AppendAllText(path, new string('-', 15));
         File.AppendAllText(path, "\n\n");
         File.AppendAllText(path, game.GetCatMouseDistance());

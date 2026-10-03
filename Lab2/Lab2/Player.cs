@@ -16,12 +16,18 @@ namespace Lab2
     {
         public string Name { get; }
         public int Location { get; private set; }
-        public Status Stat { get; private set; }
+        public Status Stat { get; set; }
         public int Distance { get; private set; }
 
         public Player(string name)
         {
             this.Name = name;
+            this.Stat = Status.NotInGame;
+        }
+
+        public void Move(int size, int arg)
+        {
+            if (Stat == Status.NotInGame) Location = Math.Abs(arg); else { Location = (Location + arg % size + size) % size; Distance += Math.Abs(arg); }
         }
 
     }

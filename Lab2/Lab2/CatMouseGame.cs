@@ -22,7 +22,7 @@ namespace Lab2
         public Command(string[] ar)
         {
             command = ar[0][0];
-            if (ar.Length == 2) argument = Convert.ToInt32(ar[1]); 
+            if (ar.Length == 2) argument = Convert.ToInt32(ar[1]);
         }
     }
 
@@ -33,7 +33,7 @@ namespace Lab2
         private Player cat;
         private Player mouse;
         private int GameOverTurn;
-        
+
 
         public CatMouseGame(int fieldSize)
         {
@@ -51,7 +51,7 @@ namespace Lab2
                     cat.Move(FieldSize, c.argument);
                     break;
                 case 'M':
-                    mouse.Move(FieldSize,c.argument);
+                    mouse.Move(FieldSize, c.argument);
                     break;
             }
             if (Distance() == 0)
@@ -63,22 +63,24 @@ namespace Lab2
             }
         }
 
-        public int? Distance() {
-            if ((cat.Stat == Status.Playing) &&(mouse.Stat == Status.Playing))
+        public int? Distance()
+        {
+            if ((cat.Stat == Status.Playing) && (mouse.Stat == Status.Playing))
             {
                 return Math.Abs(cat.Location - mouse.Location);
-            } else
+            }
+            else
             {
                 return null;
             }
         }
-        
-        
+
+
 
         public string State()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"{(cat.Stat == Status.NotInGame ?  "??" : cat.Location),-3} {(mouse.Stat == Status.NotInGame ? "??" : mouse.Location),-5} {((Distance()!=null) ? Distance() : " "),-8}");
+            sb.Append($"{(cat.Stat == Status.NotInGame ? "??" : cat.Location),-3} {(mouse.Stat == Status.NotInGame ? "??" : mouse.Location),-5} {((Distance() != null) ? Distance() : " "),-8}");
             sb.Append('\n');
             return sb.ToString();
         }
@@ -86,9 +88,9 @@ namespace Lab2
         public string FinalState()
         {
             return cat.Stat == Status.Winner ? $"Mouse catched at cell: {this.GameOverTurn}" : "Mouse evaded cat";
-           
+
         }
-       
+
         public string GetCatMouseDistance()
         {
             StringBuilder b = new StringBuilder();
@@ -116,10 +118,11 @@ namespace Lab2
                             move(c);
                             break;
                     }
-                } else break;
-                
+                }
+                else break;
+
             }
-            
+
             if (st != GameStatus.Ended)
             {
                 mouse.Stat = Status.Winner;
@@ -135,5 +138,16 @@ namespace Lab2
             file_text.Append(FinalState());
             return file_text;
         }
+
+        public int? getCatPos()
+        {
+            return cat.Location;
+        }
+        public int? getMousePos()
+        {
+            return mouse.Location;
+        }
+        public int getCatDistance() { return cat.Distance; }
+        public int getMouseDistance() { return mouse.Distance; }
     }
 }

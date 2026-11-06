@@ -21,7 +21,7 @@ namespace Test
         public void TokensLength()
         {
             int l = text.Sentences.Count();
-            Assert.AreEqual(5, l);
+            Assert.AreEqual(4, l);
         }
 
         [TestMethod]

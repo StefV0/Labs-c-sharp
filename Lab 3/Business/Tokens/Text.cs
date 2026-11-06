@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -9,6 +9,8 @@ namespace Business.Tokens
     [XmlRoot("text")]
     public class Text
     {
+
+        
         
         [XmlElement("sentence")]
         public List<Sentence> Sentences { get; set; } = new List<Sentence>();
@@ -171,6 +173,37 @@ namespace Business.Tokens
         public override string ToString()
         {
             return string.Join(Environment.NewLine, Sentences.Select(s => s.ToString()));
+        }
+
+        public List<FreqLine> GetConcordance()
+        {
+            var concordance = new Dictionary<string, (int Count, List<int> Sentences)>(StringComparer.OrdinalIgnoreCase);
+
+            for (int i = 0; i < Sentences.Count; i++)
+            {
+                int sentenceNumber = i + 1;
+                foreach (var word in Sentences[i].GetWords())
+                {
+                    string key = word.Value.ToLower();
+                    if (!concordance.TryGetValue(key, out var entry))
+                    {
+                        entry = (0, new List<int>());
+                    }
+
+                    entry.Count++;
+                    if (!entry.Sentences.Contains(sentenceNumber))
+                    {
+                        entry.Sentences.Add(sentenceNumber);
+                    }
+
+                    concordance[key] = entry;
+                }
+            }
+
+            return concordance
+                .OrderBy(kvp => kvp.Key, StringComparer.CurrentCultureIgnoreCase)
+                .Select(kvp => new FreqLine(kvp.Key, kvp.Value.Count, kvp.Value.Sentences))
+                .ToList();
         }
 
     }

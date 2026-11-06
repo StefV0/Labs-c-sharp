@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 using Business;
 using Business.Tokens;
@@ -82,6 +82,15 @@ Tokens are small blocks of text, such as words and punctuation.
             Console.WriteLine("\n--- 7. ЭКСПОРТ ОБЪЕКТА TEXT В XML---");
             string xmlOutput = parsedText.ExportToXml(filePath: @"D:\C#\Labs\Lab 3\Lab 3\Parse text\Parsed.xml");
             Console.WriteLine(xmlOutput);
+
+            Console.WriteLine("\n--- 8. КОНКОРДАНС (GETCONCORDANCE) ---");
+            var consonanceList = parsedText.GetConcordance();
+            Console.WriteLine($"{"Слово",-20} | {"Частота",-7} | Вхождения в предложения");
+            Console.WriteLine(new string('-', 60));
+            foreach (var item in consonanceList)
+            {
+                Console.WriteLine(item);
+            }
         }
 
         private static void PrintSentencesWithIndex(IList<Sentence> sentences)

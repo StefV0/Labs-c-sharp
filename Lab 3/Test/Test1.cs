@@ -21,7 +21,7 @@ namespace Test
         public void TokensLength()
         {
             int l = text.Sentences.Count();
-            Assert.AreEqual(4, l);
+            Assert.AreEqual(5, l);
         }
 
         [TestMethod]
@@ -37,6 +37,13 @@ namespace Test
             string[] stopw = { "В", "чиТать" };
             text[0].RemoveStopWords(stopw);
             Assert.DoesNotContain("читать", text[0].ToString());
+        }
+
+        [TestMethod]
+        public void TestConcodance()
+        {
+            var biggest = text.GetConcordance().OrderBy(item => item.Frequency).LastOrDefault();
+            Assert.AreEqual("влад", biggest.Word);
         }
     }
 }
